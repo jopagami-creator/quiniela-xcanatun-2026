@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiniela Oficial La Reforma</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{background:#07163a;color:white;padding:20px}
+.container{max-width:1800px;margin:auto}
+header{text-align:center;margin-bottom:40px}
+.logo{width:330px;max-width:90%;background:white;border-radius:20px;padding:15px;margin-bottom:20px}
+h1{font-size:3rem;margin-bottom:10px}
+.deadline,.rules-box,.user-box,.day-card{background:#0f2459;border:2px solid #1f4bbd;border-radius:18px;padding:20px;margin-bottom:25px}
+.deadline{display:inline-block;color:#ffd166;font-weight:bold}
+.rules-box{line-height:1.7}
+.rules-box h2{text-align:center;color:#00d0ff}
+.rules-box h3{color:#ffd166;margin-top:18px}
+.rules-box ul{padding-left:25px}
+.user-box{display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
+.user-box input,.user-box select{padding:12px;border:none;border-radius:10px;width:280px;font-size:16px}
+.day-title{text-align:center;color:#00d0ff;margin-bottom:20px;font-size:1.6rem}
+.match{background:#16357d;border-radius:12px;padding:12px;margin-bottom:12px}
+.match-title{text-align:center;color:#dce8ff;font-weight:bold;margin-bottom:8px}
+.match-info{text-align:center;color:#ffd166;font-size:13px;margin-bottom:8px}
+.team-row{display:flex;justify-content:space-between;align-items:center;margin:8px 0}
+.score{width:55px;height:38px;border:none;border-radius:8px;text-align:center;font-size:18px;font-weight:bold}
+.save-container{text-align:center;margin-top:50px}
+.save-btn{padding:18px 35px;border:none;border-radius:12px;background:#00b4ff;color:white;font-weight:bold;cursor:pointer;font-size:1.2rem}
+.status-message{text-align:center;margin-bottom:20px;color:#ffd166;font-weight:bold}
+footer{text-align:center;margin-top:60px;color:#bdbdbd}
+@media(max-width:900px){h1{font-size:2rem}.user-box{flex-direction:column}.user-box input,.user-box select{width:100%}}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+<img src="logo.png" class="logo" alt="La Reforma">
+<h1>QUINIELA OFICIAL</h1>
+<h1>LA REFORMA</h1>
+<p>Mundial 2026</p>
+
+<div class="deadline">
+⏳ Última fecha para guardar o modificar quinielas:
+11 de junio de 2026 • 12:00 PM (Hora Mérida)
+</div>
+</header>
+
+<div class="rules-box">
+<h2>🏆 QUINIELA OFICIAL LA REFORMA – MUNDIAL 2026</h2>
+
+<p>Bienvenido a la Quiniela Oficial La Reforma para el Mundial 2026.</p>
+
+<p>En esta plataforma podrás registrar tus predicciones de todos los partidos de la fase de grupos del Mundial y competir contra otros participantes de tu sucursal.</p>
+
+<h3>📋 ¿Cómo funciona?</h3>
+<ul>
+<li>Ingresa tu nombre completo, número de teléfono y sucursal.</li>
+<li>Llena los marcadores que crees que tendrá cada partido.</li>
+<li>Guarda tu quiniela.</li>
+<li>Puedes volver a entrar y actualizar tus picks utilizando el mismo nombre y número antes de la fecha límite.</li>
+</ul>
+
+<h3>🏅 Sistema de puntos</h3>
+<ul>
+<li><strong>Marcador exacto:</strong> 3 puntos.</li>
+<li><strong>Acertar ganador o empate:</strong> 1 punto.</li>
+<li><strong>Resultado incorrecto:</strong> 0 puntos.</li>
+</ul>
+
+<h3>🎁 Premios</h3>
+<ul>
+<li>🥇 <strong>1er Lugar:</strong> $3,000 pesos en consumo.</li>
+<li>🥈 <strong>2do Lugar:</strong> $1,000 pesos en consumo.</li>
+</ul>
+
+<p><strong>Importante:</strong> Los premios deberán ser consumidos en una sola visita y aplican únicamente en consumo dentro del restaurante.</p>
+
+<h3>📞 Contacto de ganadores</h3>
+<p>Los ganadores serán contactados directamente al número de teléfono registrado en su quiniela.</p>
+</div>
+
+<div class="user-box">
+<input type="text" id="userName" placeholder="Nombre completo" autocomplete="off">
+<input type="tel" id="userPhone" placeholder="Número de teléfono" autocomplete="off">
+
+<select id="sedeSelect">
+<option value="">Selecciona tu sede</option>
+<option value="La Reforma Líbano">La Reforma Líbano</option>
+<option value="La Reforma Xcanatún">La Reforma Xcanatún</option>
+</select>
+</div>
+
+<div class="status-message" id="statusMessage"></div>
+
+<div id="matchesContainer"></div>
+
+<div class="save-container">
+<button class="save-btn" onclick="savePredictions()">GUARDAR / ACTUALIZAR QUINIELA</button>
+</div>
+
+<footer>Quiniela Oficial La Reforma</footer>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyCYW14XmuBw6JPvrz6rEJ071pD4pWxPnAI",
+authDomain:"quiniela-xcanatun.firebaseapp.com",
+projectId:"quiniela-xcanatun",
+storageBucket:"quiniela-xcanatun.firebasestorage.app",
+messagingSenderId:"824126319061",
+appId:"1:824126319061:web:87cf3fb2addf5751e6355c",
+measurementId:"G-F1ZS7CWF4R"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+const fechaLimite=new Date("2026-06-11T12:00:00-06:00");
+
+function setStatus(msg){document.getElementById("statusMessage").innerText=msg}
+
+function revisarFechaLimite(){
+const boton=document.querySelector(".save-btn");
+if(new Date()>=fechaLimite){
+boton.disabled=true;
+boton.innerText="QUINIELA CERRADA";
+boton.style.background="gray";
+boton.style.cursor="not-allowed";
+}
+}
+
+revisarFechaLimite();
+
+const matches=[
+["A","2026-06-11T16:00:00-06:00","Jueves 11 de junio","16:00","México","Sudáfrica"],
+["A","2026-06-11T23:00:00-06:00","Jueves 11 de junio","23:00","Corea","Chequia"],
+["B","2026-06-12T16:00:00-06:00","Viernes 12 de junio","16:00","Canadá","Bosnia"],
+["D","2026-06-12T22:00:00-06:00","Viernes 12 de junio","22:00","EE.UU.","Paraguay"],
+["C","2026-06-13T19:00:00-06:00","Sábado 13 de junio","19:00","Brasil","Marruecos"],
+["C","2026-06-13T22:00:00-06:00","Sábado 13 de junio","22:00","Haití","Escocia"],
+["B","2026-06-14T02:00:00-06:00","Sábado 13 de junio","26:00","Qatar","Suiza"],
+["D","2026-06-14T01:00:00-06:00","Domingo 14 de junio","01:00","Australia","Turquía"],
+["E","2026-06-14T14:00:00-06:00","Domingo 14 de junio","14:00","Alemania","Curazao"],
+["F","2026-06-14T17:00:00-06:00","Domingo 14 de junio","17:00","Países Bajos","Japón"],
+["E","2026-06-14T20:00:00-06:00","Domingo 14 de junio","20:00","Ecuador","Costa de Marfil"],
+["F","2026-06-14T23:00:00-06:00","Domingo 14 de junio","23:00","Suecia","Túnez"],
+["H","2026-06-15T13:00:00-06:00","Lunes 15 de junio","13:00","España","Cabo Verde"],
+["G","2026-06-15T16:00:00-06:00","Lunes 15 de junio","16:00","Bélgica","Egipto"],
+["H","2026-06-15T19:00:00-06:00","Lunes 15 de junio","19:00","Arabia Saudita","Uruguay"],
+["G","2026-06-15T22:00:00-06:00","Lunes 15 de junio","22:00","Irán","Nueva Zelanda"],
+["I","2026-06-16T16:00:00-06:00","Martes 16 de junio","16:00","Francia","Senegal"],
+["I","2026-06-16T19:00:00-06:00","Martes 16 de junio","19:00","Irak","Noruega"],
+["J","2026-06-16T22:00:00-06:00","Martes 16 de junio","22:00","Argentina","Argelia"],
+["K","2026-06-17T16:00:00-06:00","Miércoles 17 de junio","16:00","Portugal","RD Congo"],
+["L","2026-06-17T17:00:00-06:00","Miércoles 17 de junio","17:00","Inglaterra","Croacia"],
+["J","2026-06-17T17:00:00-06:00","Miércoles 17 de junio","17:00","Austria","Jordania"],
+["L","2026-06-17T20:00:00-06:00","Miércoles 17 de junio","20:00","Ghana","Panamá"],
+["K","2026-06-17T23:00:00-06:00","Miércoles 17 de junio","23:00","Uzbekistán","Colombia"],
+["A","2026-06-18T13:00:00-06:00","Jueves 18 de junio","13:00","Sudáfrica","Chequia"],
+["B","2026-06-18T16:00:00-06:00","Jueves 18 de junio","16:00","Suiza","Bosnia"],
+["B","2026-06-18T19:00:00-06:00","Jueves 18 de junio","19:00","Canadá","Qatar"],
+["A","2026-06-18T22:00:00-06:00","Jueves 18 de junio","22:00","México","Corea"],
+["D","2026-06-19T16:00:00-06:00","Viernes 19 de junio","16:00","EE.UU.","Australia"],
+["C","2026-06-19T19:00:00-06:00","Viernes 19 de junio","19:00","Escocia","Marruecos"],
+["C","2026-06-19T22:00:00-06:00","Viernes 19 de junio","22:00","Brasil","Haití"],
+["D","2026-06-20T01:00:00-06:00","Sábado 20 de junio","01:00","Paraguay","Turquía"],
+["F","2026-06-20T14:00:00-06:00","Sábado 20 de junio","14:00","Países Bajos","Suecia"],
+["E","2026-06-20T17:00:00-06:00","Sábado 20 de junio","17:00","Alemania","Costa de Marfil"],
+["E","2026-06-20T21:00:00-06:00","Sábado 20 de junio","21:00","Ecuador","Curazao"],
+["F","2026-06-21T01:00:00-06:00","Domingo 21 de junio","01:00","Túnez","Japón"],
+["H","2026-06-21T13:00:00-06:00","Domingo 21 de junio","13:00","España","Arabia Saudita"],
+["G","2026-06-21T16:00:00-06:00","Domingo 21 de junio","16:00","Bélgica","Irán"],
+["H","2026-06-21T19:00:00-06:00","Domingo 21 de junio","19:00","Uruguay","Cabo Verde"],
+["G","2026-06-21T22:00:00-06:00","Domingo 21 de junio","22:00","Nueva Zelanda","Egipto"],
+["J","2026-06-22T14:00:00-06:00","Lunes 22 de junio","14:00","Argentina","Austria"],
+["I","2026-06-22T18:00:00-06:00","Lunes 22 de junio","18:00","Francia","Irak"],
+["I","2026-06-22T21:00:00-06:00","Lunes 22 de junio","21:00","Noruega","Senegal"],
+["J","2026-06-23T00:00:00-06:00","Martes 23 de junio","00:00","Argelia","Jordania"],
+["K","2026-06-23T14:00:00-06:00","Martes 23 de junio","14:00","Portugal","Uzbekistán"],
+["L","2026-06-23T17:00:00-06:00","Martes 23 de junio","17:00","Inglaterra","Ghana"],
+["L","2026-06-23T20:00:00-06:00","Martes 23 de junio","20:00","Panamá","Croacia"],
+["K","2026-06-23T23:00:00-06:00","Martes 23 de junio","23:00","Colombia","RD Congo"],
+["B","2026-06-24T16:00:00-06:00","Miércoles 24 de junio","16:00","Canadá","Suiza"],
+["B","2026-06-24T20:00:00-06:00","Miércoles 24 de junio","20:00","Bosnia","Qatar"],
+["C","2026-06-24T19:00:00-06:00","Miércoles 24 de junio","19:00","Brasil","Escocia"],
+["C","2026-06-24T19:00:00-06:00","Miércoles 24 de junio","19:00","Marruecos","Haití"],
+["A","2026-06-24T20:00:00-06:00","Miércoles 24 de junio","20:00","Corea","Sudáfrica"],
+["A","2026-06-24T22:00:00-06:00","Miércoles 24 de junio","22:00","México","Chequia"],
+["E","2026-06-25T17:00:00-06:00","Jueves 25 de junio","17:00","Ecuador","Alemania"],
+["E","2026-06-25T17:00:00-06:00","Jueves 25 de junio","17:00","Curazao","Costa de Marfil"],
+["F","2026-06-25T20:00:00-06:00","Jueves 25 de junio","20:00","Japón","Suecia"],
+["F","2026-06-25T22:00:00-06:00","Jueves 25 de junio","22:00","Países Bajos","Túnez"],
+["D","2026-06-25T23:00:00-06:00","Jueves 25 de junio","23:00","EE.UU.","Turquía"],
+["D","2026-06-25T23:00:00-06:00","Jueves 25 de junio","23:00","Australia","Paraguay"],
+["I","2026-06-26T16:00:00-06:00","Viernes 26 de junio","16:00","Francia","Noruega"],
+["I","2026-06-26T16:00:00-06:00","Viernes 26 de junio","16:00","Senegal","Irak"],
+["H","2026-06-26T21:00:00-06:00","Viernes 26 de junio","21:00","España","Uruguay"],
+["H","2026-06-26T21:00:00-06:00","Viernes 26 de junio","21:00","Cabo Verde","Arabia Saudita"],
+["G","2026-06-27T00:00:00-06:00","Sábado 27 de junio","00:00","Bélgica","Nueva Zelanda"],
+["G","2026-06-27T00:00:00-06:00","Sábado 27 de junio","00:00","Egipto","Irán"],
+["L","2026-06-27T18:00:00-06:00","Sábado 27 de junio","18:00","Inglaterra","Panamá"],
+["L","2026-06-27T18:00:00-06:00","Sábado 27 de junio","18:00","Croacia","Ghana"],
+["K","2026-06-27T20:00:00-06:00","Sábado 27 de junio","20:00","Portugal","Colombia"],
+["K","2026-06-27T20:00:00-06:00","Sábado 27 de junio","20:00","RD Congo","Uzbekistán"],
+["J","2026-06-27T23:00:00-06:00","Sábado 27 de junio","23:00","Argentina","Jordania"],
+["J","2026-06-27T23:00:00-06:00","Sábado 27 de junio","23:00","Argelia","Austria"]
+].map((m,i)=>({
+id:`m${i+1}`,
+grupo:m[0],
+fechaISO:m[1],
+dia:m[2],
+hora:m[3],
+local:m[4],
+visitante:m[5],
+partido:`${m[4]} vs ${m[5]}`
+}));
+
+function renderMatches(){
+const container=document.getElementById("matchesContainer");
+const dias={};
+
+matches.forEach(m=>{
+if(!dias[m.dia]) dias[m.dia]=[];
+dias[m.dia].push(m);
+});
+
+Object.entries(dias).forEach(([dia,partidos])=>{
+let html=`<div class="day-card"><div class="day-title">${dia}</div>`;
+
+partidos.forEach(m=>{
+html+=`
+<div class="match" data-id="${m.id}">
+<div class="match-info">Grupo ${m.grupo} • ${m.hora} hrs</div>
+<div class="match-title">${m.local} vs ${m.visitante}</div>
+
+<div class="team-row">
+<span>${m.local}</span>
+<input class="score" type="number" min="0" placeholder="-">
+</div>
+
+<div class="team-row">
+<span>${m.visitante}</span>
+<input class="score" type="number" min="0" placeholder="-">
+</div>
+</div>`;
+});
+
+html+=`</div>`;
+container.innerHTML+=html;
+});
+}
+
+renderMatches();
+
+async function cargarQuinielaExistente(){
+const userName=document.getElementById("userName").value.trim();
+const userPhone=document.getElementById("userPhone").value.trim();
+
+if(userName===""||userPhone===""){
+setStatus("");
+return;
+}
+
+const nombreNormalizado=userName.toLowerCase().replace(/\s+/g," ").trim();
+
+const consulta=query(collection(db,"quinielas"),where("telefono","==",userPhone));
+const resultado=await getDocs(consulta);
+
+let encontrada=false;
+
+resultado.forEach(docSnap=>{
+const data=docSnap.data();
+
+if(data.nombreNormalizado===nombreNormalizado){
+encontrada=true;
+
+if(data.sede){
+document.getElementById("sedeSelect").value=data.sede;
+}
+
+if(data.predicciones){
+document.querySelectorAll(".match").forEach(match=>{
+const id=match.dataset.id;
+const pred=data.predicciones.find(p=>p.matchId===id || p.partido===match.querySelector(".match-title").innerText);
+
+if(pred){
+const rows=match.querySelectorAll(".team-row");
+rows[0].querySelector("input").value=pred.marcadorLocal;
+rows[1].querySelector("input").value=pred.marcadorVisitante;
+}
+});
+}
+}
+});
+
+if(encontrada){
+setStatus("✅ Quiniela encontrada. Tus picks fueron cargados.");
+}else{
+setStatus("");
+}
+}
+
+document.getElementById("userName").addEventListener("change",cargarQuinielaExistente);
+document.getElementById("userPhone").addEventListener("change",cargarQuinielaExistente);
+
+window.savePredictions=async function(){
+
+if(new Date()>=fechaLimite){
+alert("La quiniela ya cerró.");
+return;
+}
+
+const userName=document.getElementById("userName").value.trim();
+const userPhone=document.getElementById("userPhone").value.trim();
+const userSede=document.getElementById("sedeSelect").value;
+
+if(userName===""){alert("Ingresa tu nombre completo");return}
+if(userPhone===""){alert("Ingresa tu número de teléfono");return}
+if(userSede===""){alert("Selecciona tu sede");return}
+
+const nombreNormalizado=userName.toLowerCase().replace(/\s+/g," ").trim();
+
+const predictions=[];
+let incompleto=false;
+
+document.querySelectorAll(".match").forEach(match=>{
+const rows=match.querySelectorAll(".team-row");
+const id=match.dataset.id;
+const info=matches.find(m=>m.id===id);
+
+const score1=rows[0].querySelector("input").value;
+const score2=rows[1].querySelector("input").value;
+
+if(score1===""||score2===""){
+incompleto=true;
+}
+
+predictions.push({
+matchId:id,
+grupo:info.grupo,
+fechaISO:info.fechaISO,
+dia:info.dia,
+hora:info.hora,
+partido:info.partido,
+local:info.local,
+visitante:info.visitante,
+marcadorLocal:Number(score1),
+marcadorVisitante:Number(score2)
+});
+});
+
+if(incompleto){
+alert("Completa todos los marcadores antes de guardar.");
+return;
+}
+
+const consulta=query(collection(db,"quinielas"),where("telefono","==",userPhone));
+const resultado=await getDocs(consulta);
+
+let documentoExistente=null;
+let telefonoUsadoPorOtroNombre=false;
+
+resultado.forEach(docSnap=>{
+const data=docSnap.data();
+
+if(data.nombreNormalizado===nombreNormalizado){
+documentoExistente=docSnap.id;
+}else{
+telefonoUsadoPorOtroNombre=true;
+}
+});
+
+if(telefonoUsadoPorOtroNombre){
+alert("Este número de teléfono ya está registrado con otro nombre.");
+return;
+}
+
+try{
+if(documentoExistente){
+await updateDoc(doc(db,"quinielas",documentoExistente),{
+nombre:userName,
+nombreNormalizado:nombreNormalizado,
+telefono:userPhone,
+sede:userSede,
+predicciones:predictions,
+actualizado:new Date()
+});
+
+alert("✅ Quiniela actualizada correctamente.");
+}else{
+await addDoc(collection(db,"quinielas"),{
+nombre:userName,
+nombreNormalizado:nombreNormalizado,
+telefono:userPhone,
+sede:userSede,
+predicciones:predictions,
+puntos:0,
+fecha:new Date()
+});
+
+alert("✅ Quiniela guardada correctamente.");
+}
+}catch(error){
+console.error(error);
+alert("❌ Error al guardar o actualizar");
+}
+};
+
+</script>
+
+</body>
+</html>
