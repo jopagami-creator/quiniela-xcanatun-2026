@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Tabla General | Quiniela La Reforma</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#07163a;
+    color:white;
+    padding:20px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+header{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.logo{
+    width:280px;
+    background:white;
+    border-radius:20px;
+    padding:15px;
+    margin-bottom:20px;
+}
+
+h1{
+    font-size:3rem;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    color:#cfcfcf;
+}
+
+.table-card{
+    background:#0f2459;
+    border-radius:20px;
+    padding:25px;
+    border:2px solid #1f4bbd;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th, td{
+    padding:15px;
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+th{
+    background:#16357d;
+    font-size:1.1rem;
+}
+
+tr:nth-child(even){
+    background:#132b67;
+}
+
+.first{
+    background:#FFD700 !important;
+    color:black;
+    font-weight:bold;
+}
+
+.second{
+    background:#C0C0C0 !important;
+    color:black;
+    font-weight:bold;
+}
+
+.third{
+    background:#CD7F32 !important;
+    color:white;
+    font-weight:bold;
+}
+
+.loading{
+    text-align:center;
+    margin-top:20px;
+    color:#ffd166;
+}
+
+footer{
+    text-align:center;
+    margin-top:40px;
+    color:#cfcfcf;
+}
+
+@media(max-width:800px){
+
+    h1{
+        font-size:2rem;
+    }
+
+    th, td{
+        padding:10px;
+        font-size:14px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+
+<img src="logo.png" class="logo" alt="La Reforma">
+
+<h1>TABLA GENERAL</h1>
+
+<p class="subtitle">
+Quiniela Oficial La Reforma
+</p>
+
+</header>
+
+<div class="table-card">
+
+<table>
+
+<thead>
+
+<tr>
+<th>#</th>
+<th>Participante</th>
+<th>Puntos</th>
+</tr>
+
+</thead>
+
+<tbody id="leaderboard">
+
+<tr>
+<td colspan="3" class="loading">
+Cargando tabla...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<footer>
+Actualización automática en tiempo real
+</footer>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyCYW14XmuBw6JPvrz6rEJ071pD4pWxPnAI",
+
+  authDomain: "quiniela-xcanatun.firebaseapp.com",
+
+  projectId: "quiniela-xcanatun",
+
+  storageBucket: "quiniela-xcanatun.firebasestorage.app",
+
+  messagingSenderId: "824126319061",
+
+  appId: "1:824126319061:web:87cf3fb2addf5751e6355c",
+
+  measurementId: "G-F1ZS7CWF4R"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+async function cargarTabla(){
+
+    const tbody = document.getElementById("leaderboard");
+
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="3" class="loading">
+                Cargando tabla...
+            </td>
+        </tr>
+    `;
+
+    const participantes = [];
+
+    const querySnapshot = await getDocs(collection(db, "quinielas"));
+
+    querySnapshot.forEach((docSnap) => {
+
+        participantes.push(docSnap.data());
+
+    });
+
+    participantes.sort((a,b) => {
+        return (b.puntos || 0) - (a.puntos || 0);
+    });
+
+    tbody.innerHTML = "";
+
+    if(participantes.length === 0){
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3">
+                    No hay participantes todavía
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+    participantes.forEach((p,index) => {
+
+        let clase = "";
+
+        if(index === 0) clase = "first";
+        if(index === 1) clase = "second";
+        if(index === 2) clase = "third";
+
+        tbody.innerHTML += `
+            <tr class="${clase}">
+                <td>${index + 1}</td>
+                <td>${p.nombre || "-"}</td>
+                <td>${p.puntos || 0}</td>
+            </tr>
+        `;
+
+    });
+
+}
+
+cargarTabla();
+
+setInterval(cargarTabla, 10000);
+
+</script>
+
+</body>
+</html>
