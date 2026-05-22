@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Quiniela Oficial La Reforma</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#07163a;
+    color:white;
+    padding:20px;
+}
+
+.container{
+    max-width:1800px;
+    margin:auto;
+}
+
+header{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.logo{
+    width:330px;
+    max-width:90%;
+    background:white;
+    border-radius:20px;
+    padding:15px;
+    margin-bottom:20px;
+}
+
+header h1{
+    font-size:3rem;
+    margin-bottom:10px;
+}
+
+header p{
+    color:#d8d8d8;
+    font-size:1.1rem;
+}
+
+.deadline{
+    margin-top:20px;
+    background:#16357d;
+    padding:15px;
+    border-radius:12px;
+    display:inline-block;
+    font-weight:bold;
+    color:#ffd166;
+}
+
+.rules-box{
+    background:#0f2459;
+    border:2px solid #1f4bbd;
+    border-radius:18px;
+    padding:25px;
+    margin-bottom:30px;
+    line-height:1.7;
+}
+
+.rules-box h2{
+    color:#00d0ff;
+    margin-bottom:15px;
+    text-align:center;
+}
+
+.rules-box h3{
+    color:#ffd166;
+    margin-top:18px;
+    margin-bottom:10px;
+}
+
+.rules-box ul{
+    padding-left:25px;
+}
+
+.user-box{
+    background:#0f2459;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:30px;
+    display:flex;
+    gap:15px;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.user-box input,
+.user-box select{
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    width:280px;
+    font-size:16px;
+}
+
+.status-message{
+    text-align:center;
+    margin-bottom:25px;
+    color:#ffd166;
+    font-weight:bold;
+}
+
+.save-container{
+    text-align:center;
+    margin-top:50px;
+}
+
+.save-btn{
+    padding:18px 35px;
+    border:none;
+    border-radius:12px;
+    background:#00b4ff;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:1.2rem;
+}
+
+.groups-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+    gap:20px;
+}
+
+.group-card{
+    background:#0f2459;
+    border-radius:18px;
+    padding:20px;
+    border:2px solid #1f4bbd;
+}
+
+.group-title{
+    text-align:center;
+    font-size:1.5rem;
+    margin-bottom:20px;
+    font-weight:bold;
+}
+
+.match{
+    background:#16357d;
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:12px;
+}
+
+.match-title{
+    text-align:center;
+    margin-bottom:10px;
+    color:#dce8ff;
+    font-weight:bold;
+}
+
+.team-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:8px 0;
+}
+
+.score{
+    width:55px;
+    height:38px;
+    border:none;
+    border-radius:8px;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+}
+
+footer{
+    text-align:center;
+    margin-top:60px;
+    color:#bdbdbd;
+}
+
+@media(max-width:900px){
+
+    header h1{
+        font-size:2rem;
+    }
+
+    .user-box{
+        flex-direction:column;
+    }
+
+    .user-box input,
+    .user-box select{
+        width:100%;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+
+<img src="logo.png" class="logo" alt="La Reforma">
+
+<h1>QUINIELA OFICIAL</h1>
+<h1>LA REFORMA</h1>
+
+<p>Mundial 2026</p>
+
+<div class="deadline">
+⏳ Última fecha para guardar o modificar quinielas:
+11 de junio de 2026 • 12:00 PM (Hora Mérida)
+</div>
+
+</header>
+
+<div class="rules-box">
+
+<h2>🏆 QUINIELA OFICIAL LA REFORMA – MUNDIAL 2026</h2>
+
+<p>
+Bienvenido a la Quiniela Oficial La Reforma para el Mundial 2026.
+</p>
+
+<p>
+En esta plataforma podrás registrar tus predicciones de todos los partidos de la fase de grupos del Mundial y competir contra otros participantes de tu sucursal.
+</p>
+
+<h3>📋 ¿Cómo funciona?</h3>
+
+<ul>
+<li>Ingresa tu nombre completo, número de teléfono y sucursal.</li>
+<li>Llena los marcadores que crees que tendrá cada partido.</li>
+<li>Guarda tu quiniela.</li>
+<li>Puedes volver a entrar y actualizar tus picks utilizando el mismo nombre y número antes de la fecha límite.</li>
+</ul>
+
+<h3>⏰ Fecha límite</h3>
+
+<p>
+Las quinielas se podrán modificar únicamente hasta:
+<br>
+<strong>11 de junio de 2026 a las 12:00 PM (Hora Mérida).</strong>
+<br>
+Después de esa hora, la plataforma cerrará automáticamente.
+</p>
+
+<h3>🏅 Sistema de puntos</h3>
+
+<ul>
+<li><strong>Marcador exacto:</strong> 3 puntos.</li>
+<li><strong>Acertar ganador o empate:</strong> 1 punto.</li>
+<li><strong>Resultado incorrecto:</strong> 0 puntos.</li>
+</ul>
+
+<h3>📊 Tablas de posiciones</h3>
+
+<p>
+Cada sucursal tendrá su propia quiniela independiente:
+</p>
+
+<ul>
+<li>Quiniela La Reforma Líbano</li>
+<li>Quiniela La Reforma Xcanatún</li>
+</ul>
+
+<p>
+Los participantes competirán únicamente contra personas de su misma sucursal.
+</p>
+
+<h3>🎁 Premios</h3>
+
+<p>
+En cada sucursal habrá premios para los mejores participantes:
+</p>
+
+<ul>
+
+<li>
+🥇 <strong>1er Lugar:</strong>
+<br>
+$3,000 pesos en consumo, válidos en la sucursal donde te hayas inscrito.
+</li>
+
+<li>
+🥈 <strong>2do Lugar:</strong>
+<br>
+$1,000 pesos en consumo, válidos en la sucursal donde te hayas inscrito.
+</li>
+
+</ul>
+
+<p>
+<strong>Importante:</strong>
+Los premios deberán ser consumidos en una sola visita y aplican únicamente en consumo dentro del restaurante.
+</p>
+
+<h3>📞 Contacto de ganadores</h3>
+
+<p>
+Los ganadores serán contactados directamente al número de teléfono registrado en su quiniela.
+</p>
+
+<h3>⚽ ¡Mucha suerte y que gane el mejor pronosticador del Mundial 2026!</h3>
+
+</div>
+
+<div class="user-box">
+
+<input type="text" id="userName" placeholder="Nombre completo" autocomplete="off">
+
+<input type="tel" id="userPhone" placeholder="Número de teléfono" autocomplete="off">
+
+<select id="sedeSelect">
+<option value="">Selecciona tu sede</option>
+<option value="La Reforma Líbano">La Reforma Líbano</option>
+<option value="La Reforma Xcanatún">La Reforma Xcanatún</option>
+</select>
+
+</div>
+
+<div class="status-message" id="statusMessage"></div>
+
+<div class="groups-grid" id="groupsContainer"></div>
+
+<div class="save-container">
+
+<button class="save-btn" onclick="savePredictions()">
+GUARDAR / ACTUALIZAR QUINIELA
+</button>
+
+</div>
+
+<footer>
+Quiniela Oficial La Reforma
+</footer>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  doc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyCYW14XmuBw6JPvrz6rEJ071pD4pWxPnAI",
+
+  authDomain: "quiniela-xcanatun.firebaseapp.com",
+
+  projectId: "quiniela-xcanatun",
+
+  storageBucket: "quiniela-xcanatun.firebasestorage.app",
+
+  messagingSenderId: "824126319061",
+
+  appId: "1:824126319061:web:87cf3fb2addf5751e6355c",
+
+  measurementId: "G-F1ZS7CWF4R"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+const fechaLimite = new Date("2026-06-11T12:00:00-06:00");
+
+function setStatus(message){
+    document.getElementById("statusMessage").innerText = message;
+}
+
+function revisarFechaLimite(){
+
+    const boton = document.querySelector(".save-btn");
+
+    if(new Date() >= fechaLimite){
+
+        boton.disabled = true;
+
+        boton.innerText = "QUINIELA CERRADA";
+
+        boton.style.background = "gray";
+
+        boton.style.cursor = "not-allowed";
+
+    }
+
+}
+
+revisarFechaLimite();
+
+const groups = {
+
+"Grupo A": ["México","Sudáfrica","Corea","Chequia"],
+
+"Grupo B": ["Canadá","Bosnia","Qatar","Suiza"],
+
+"Grupo C": ["Brasil","Marruecos","Haití","Escocia"],
+
+"Grupo D": ["EE.UU.","Paraguay","Australia","Turquía"],
+
+"Grupo E": ["Alemania","Curazao","Costa de Marfil","Ecuador"],
+
+"Grupo F": ["Países Bajos","Japón","Suecia","Túnez"],
+
+"Grupo G": ["Bélgica","Egipto","Irán","Nueva Zelanda"],
+
+"Grupo H": ["España","Cabo Verde","Arabia Saudita","Uruguay"],
+
+"Grupo I": ["Francia","Senegal","Irak","Noruega"],
+
+"Grupo J": ["Argentina","Argelia","Austria","Jordania"],
+
+"Grupo K": ["Portugal","RD Congo","Uzbekistán","Colombia"],
+
+"Grupo L": ["Inglaterra","Croacia","Ghana","Panamá"]
+
+};
+
+const groupsContainer = document.getElementById("groupsContainer");
+
+Object.entries(groups).forEach(([groupName, teams]) => {
+
+    const card = document.createElement("div");
+
+    card.className = "group-card";
+
+    let matchesHTML = "";
+
+    for(let i=0;i<teams.length;i++){
+
+        for(let j=i+1;j<teams.length;j++){
+
+            matchesHTML += `
+
+            <div class="match">
+
+                <div class="match-title">
+                    ${teams[i]} vs ${teams[j]}
+                </div>
+
+                <div class="team-row">
+                    <span>${teams[i]}</span>
+                    <input class="score" type="number" min="0" placeholder="-">
+                </div>
+
+                <div class="team-row">
+                    <span>${teams[j]}</span>
+                    <input class="score" type="number" min="0" placeholder="-">
+                </div>
+
+            </div>
+
+            `;
+
+        }
+
+    }
+
+    card.innerHTML = `
+        <div class="group-title">${groupName}</div>
+        ${matchesHTML}
+    `;
+
+    groupsContainer.appendChild(card);
+
+});
+
+async function cargarQuinielaExistente(){
+
+    const userName = document.getElementById("userName").value.trim();
+
+    const userPhone = document.getElementById("userPhone").value.trim();
+
+    if(userName === "" || userPhone === ""){
+        setStatus("");
+        return;
+    }
+
+    const nombreNormalizado = userName.toLowerCase().replace(/\s+/g, " ").trim();
+
+    const consulta = query(
+        collection(db, "quinielas"),
+        where("telefono", "==", userPhone)
+    );
+
+    const resultado = await getDocs(consulta);
+
+    let encontrada = false;
+
+    resultado.forEach(docSnap => {
+
+        const data = docSnap.data();
+
+        if(data.nombreNormalizado === nombreNormalizado){
+
+            encontrada = true;
+
+            if(data.sede){
+                document.getElementById("sedeSelect").value = data.sede;
+            }
+
+            if(data.predicciones){
+
+                document.querySelectorAll(".match").forEach(match => {
+
+                    const rows = match.querySelectorAll(".team-row");
+
+                    const team1 = rows[0].querySelector("span").innerText;
+
+                    const team2 = rows[1].querySelector("span").innerText;
+
+                    const partido = `${team1} vs ${team2}`;
+
+                    const prediccion = data.predicciones.find(
+                        p => p.partido === partido
+                    );
+
+                    if(prediccion){
+
+                        rows[0].querySelector("input").value =
+                            prediccion.marcadorLocal;
+
+                        rows[1].querySelector("input").value =
+                            prediccion.marcadorVisitante;
+
+                    }
+
+                });
+
+            }
+
+        }
+
+    });
+
+    if(encontrada){
+
+        setStatus("✅ Quiniela encontrada. Tus picks fueron cargados.");
+
+    }else{
+
+        setStatus("");
+
+    }
+
+}
+
+document.getElementById("userName")
+.addEventListener("change", cargarQuinielaExistente);
+
+document.getElementById("userPhone")
+.addEventListener("change", cargarQuinielaExistente);
+
+window.savePredictions = async function(){
+
+    if(new Date() >= fechaLimite){
+
+        alert("La quiniela ya cerró.");
+
+        return;
+
+    }
+
+    const userName = document.getElementById("userName").value.trim();
+
+    const userPhone = document.getElementById("userPhone").value.trim();
+
+    const userSede = document.getElementById("sedeSelect").value;
+
+    if(userName === ""){
+        alert("Ingresa tu nombre completo");
+        return;
+    }
+
+    if(userPhone === ""){
+        alert("Ingresa tu número de teléfono");
+        return;
+    }
+
+    if(userSede === ""){
+        alert("Selecciona tu sede");
+        return;
+    }
+
+    const predictions = [];
+
+    let marcadorIncompleto = false;
+
+    document.querySelectorAll(".match").forEach(match => {
+
+        const rows = match.querySelectorAll(".team-row");
+
+        const team1 = rows[0].querySelector("span").innerText;
+
+        const team2 = rows[1].querySelector("span").innerText;
+
+        const score1 = rows[0].querySelector("input").value;
+
+        const score2 = rows[1].querySelector("input").value;
+
+        if(score1 === "" || score2 === ""){
+            marcadorIncompleto = true;
+        }
+
+        predictions.push({
+
+            partido: `${team1} vs ${team2}`,
+
+            local: team1,
+
+            visitante: team2,
+
+            marcadorLocal: Number(score1),
+
+            marcadorVisitante: Number(score2)
+
+        });
+
+    });
+
+    if(marcadorIncompleto){
+
+        alert("Completa todos los marcadores antes de guardar.");
+
+        return;
+
+    }
+
+    const nombreNormalizado =
+        userName.toLowerCase().replace(/\s+/g, " ").trim();
+
+    const consulta = query(
+        collection(db, "quinielas"),
+        where("telefono", "==", userPhone)
+    );
+
+    const resultado = await getDocs(consulta);
+
+    let documentoExistente = null;
+
+    let telefonoUsadoPorOtroNombre = false;
+
+    resultado.forEach(docSnap => {
+
+        const data = docSnap.data();
+
+        if(data.nombreNormalizado === nombreNormalizado){
+
+            documentoExistente = docSnap.id;
+
+        }else{
+
+            telefonoUsadoPorOtroNombre = true;
+
+        }
+
+    });
+
+    if(telefonoUsadoPorOtroNombre){
+
+        alert(
+            "Este número de teléfono ya está registrado con otro nombre."
+        );
+
+        return;
+
+    }
+
+    try{
+
+        if(documentoExistente){
+
+            await updateDoc(doc(db, "quinielas", documentoExistente), {
+
+                nombre: userName,
+
+                nombreNormalizado: nombreNormalizado,
+
+                telefono: userPhone,
+
+                sede: userSede,
+
+                predicciones: predictions,
+
+                actualizado: new Date()
+
+            });
+
+            alert("✅ Quiniela actualizada correctamente.");
+
+        }else{
+
+            await addDoc(collection(db, "quinielas"), {
+
+                nombre: userName,
+
+                nombreNormalizado: nombreNormalizado,
+
+                telefono: userPhone,
+
+                sede: userSede,
+
+                predicciones: predictions,
+
+                puntos: 0,
+
+                fecha: new Date()
+
+            });
+
+            alert("✅ Quiniela guardada correctamente.");
+
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+        alert("❌ Error al guardar o actualizar");
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
