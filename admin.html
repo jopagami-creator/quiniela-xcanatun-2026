@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Quiniela La Reforma</title>
+
+<style>
+body{
+background:#07163a;
+color:white;
+font-family:Arial;
+padding:20px;
+}
+
+.container{
+max-width:1600px;
+margin:auto;
+}
+
+.logo{
+width:260px;
+background:white;
+border-radius:18px;
+padding:15px;
+}
+
+header{
+text-align:center;
+margin-bottom:30px;
+}
+
+.card,.day-card{
+background:#0f2459;
+border:2px solid #1f4bbd;
+border-radius:18px;
+padding:20px;
+margin-bottom:25px;
+}
+
+.day-title{
+text-align:center;
+color:#00d0ff;
+font-size:1.6rem;
+margin-bottom:20px;
+}
+
+.match{
+background:#16357d;
+border-radius:12px;
+padding:15px;
+margin-bottom:12px;
+}
+
+.match-info{
+text-align:center;
+color:#ffd166;
+font-size:13px;
+margin-bottom:8px;
+}
+
+button{
+background:#00b4ff;
+color:white;
+border:none;
+padding:13px 20px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+margin:8px;
+}
+
+.reset-btn{
+background:#ff4d4d;
+}
+
+input{
+width:65px;
+height:38px;
+border:none;
+border-radius:8px;
+text-align:center;
+font-size:18px;
+font-weight:bold;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+border:1px solid rgba(255,255,255,.2);
+padding:10px;
+text-align:center;
+}
+
+th{
+background:#16357d;
+}
+
+.leader{
+background:#00b4ff!important;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+
+<img src="logo.png" class="logo">
+
+<h1>ADMIN QUINIELA LA REFORMA</h1>
+
+</header>
+
+<div class="card">
+
+<h2>Acciones</h2>
+
+<button onclick="cargarDatos()">
+Actualizar datos
+</button>
+
+<button onclick="guardarResultados()">
+Guardar resultados reales
+</button>
+
+<button class="reset-btn" onclick="resetearResultados()">
+Resetear resultados reales
+</button>
+
+<button onclick="calcularPuntos()">
+Calcular puntos
+</button>
+
+<p id="status"></p>
+
+</div>
+
+<div class="card">
+
+<h2>Tabla de líderes</h2>
+
+<table>
+
+<thead>
+
+<tr>
+<th>#</th>
+<th>Nombre</th>
+<th>Sede</th>
+<th>Teléfono</th>
+<th>Puntos</th>
+</tr>
+
+</thead>
+
+<tbody id="leaderboard"></tbody>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<h2>Resultados reales</h2>
+
+<p>
+Los partidos están separados por día para facilitar la captura de resultados.
+</p>
+
+</div>
+
+<div id="resultados"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+getDocs,
+doc,
+setDoc,
+getDoc,
+updateDoc
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+const firebaseConfig={
+
+apiKey:"AIzaSyCYW14XmuBw6JPvrz6rEJ071pD4pWxPnAI",
+
+authDomain:"quiniela-xcanatun.firebaseapp.com",
+
+projectId:"quiniela-xcanatun",
+
+storageBucket:"quiniela-xcanatun.firebasestorage.app",
+
+messagingSenderId:"824126319061",
+
+appId:"1:824126319061:web:87cf3fb2addf5751e6355c",
+
+measurementId:"G-F1ZS7CWF4R"
+
+};
+
+const app=initializeApp(firebaseConfig);
+
+const db=getFirestore(app);
+
+let quinielas=[];
+
+let resultadosGuardados=[];
+
+function status(t){
+
+document.getElementById("status").innerText=t;
+
+}
+
+const partidosBase = [
+
+["m1","Jueves 11 de junio","A","México","Sudáfrica"],
+["m2","Jueves 11 de junio","A","Corea","Chequia"],
+
+["m3","Viernes 12 de junio","B","Canadá","Bosnia"],
+["m4","Viernes 12 de junio","D","EE.UU.","Paraguay"],
+
+["m5","Sábado 13 de junio","B","Qatar","Suiza"],
+["m6","Sábado 13 de junio","C","Brasil","Marruecos"],
+["m7","Sábado 13 de junio","C","Haití","Escocia"],
+
+["m8","Domingo 14 de junio","D","Australia","Turquía"],
+["m9","Domingo 14 de junio","E","Alemania","Curazao"],
+["m10","Domingo 14 de junio","F","Países Bajos","Japón"],
+["m11","Domingo 14 de junio","E","Ecuador","Costa de Marfil"],
+["m12","Domingo 14 de junio","F","Suecia","Túnez"]
+
+].map(p=>({
+
+matchId:p[0],
+
+dia:p[1],
+
+grupo:p[2],
+
+local:p[3],
+
+visitante:p[4],
+
+partido:`${p[3]} vs ${p[4]}`
+
+}));
+
+window.cargarDatos=async function(){
+
+status("Cargando datos...");
+
+quinielas=[];
+
+const snap=await getDocs(collection(db,"quinielas"));
+
+snap.forEach(d=>{
+
+quinielas.push({
+id:d.id,
+...d.data()
+});
+
+});
+
+await cargarResultados();
+
+mostrarLeaderboard();
+
+mostrarResultadosPorDia();
+
+status("Datos actualizados.");
+
+};
+
+async function cargarResultados(){
+
+const ref=doc(db,"resultados","fase_grupos");
+
+const snap=await getDoc(ref);
+
+resultadosGuardados=snap.exists()
+? snap.data().resultados || []
+: [];
+
+}
+
+function mostrarLeaderboard(){
+
+const tbody=document.getElementById("leaderboard");
+
+tbody.innerHTML="";
+
+const ordenados=[...quinielas].sort(
+(a,b)=>(b.puntos||0)-(a.puntos||0)
+);
+
+if(ordenados.length===0){
+
+tbody.innerHTML=`
+<tr>
+<td colspan="5">
+No hay participantes todavía.
+</td>
+</tr>
+`;
+
+return;
+
+}
+
+ordenados.forEach((q,i)=>{
+
+tbody.innerHTML+=`
+<tr class="${i===0?'leader':''}">
+<td>${i+1}</td>
+<td>${q.nombre||"-"}</td>
+<td>${q.sede||"-"}</td>
+<td>${q.telefono||"-"}</td>
+<td>${q.puntos||0}</td>
+</tr>
+`;
+
+});
+
+}
+
+function mostrarResultadosPorDia(){
+
+const contenedor=document.getElementById("resultados");
+
+contenedor.innerHTML="";
+
+const dias={};
+
+partidosBase.forEach(p=>{
+
+if(!dias[p.dia]){
+dias[p.dia]=[];
+}
+
+dias[p.dia].push(p);
+
+});
+
+Object.entries(dias).forEach(([dia,partidos])=>{
+
+let html=`
+<div class="day-card">
+
+<div class="day-title">
+${dia}
+</div>
+`;
+
+partidos.forEach(p=>{
+
+const previo=resultadosGuardados.find(r=>
+(r.matchId&&r.matchId===p.matchId)
+|| r.partido===p.partido
+);
+
+const localValue=previo
+? previo.marcadorLocal
+: "";
+
+const visitanteValue=previo
+? previo.marcadorVisitante
+: "";
+
+html+=`
+
+<div class="match" data-id="${p.matchId}">
+
+<div class="match-info">
+Grupo ${p.grupo}
+</div>
+
+<strong>${p.partido}</strong>
+
+<br><br>
+
+${p.local}
+
+<input
+type="number"
+min="0"
+id="local-${p.matchId}"
+value="${localValue}"
+>
+
+-
+
+<input
+type="number"
+min="0"
+id="visitante-${p.matchId}"
+value="${visitanteValue}"
+>
+
+${p.visitante}
+
+</div>
+
+`;
+
+});
+
+html+=`</div>`;
+
+contenedor.innerHTML+=html;
+
+});
+
+}
+
+window.guardarResultados=async function(){
+
+const resultadosFinales=[...resultadosGuardados];
+
+partidosBase.forEach(p=>{
+
+const localInput=document.getElementById(
+`local-${p.matchId}`
+).value;
+
+const visitanteInput=document.getElementById(
+`visitante-${p.matchId}`
+).value;
+
+if(localInput!==""&&visitanteInput!==""){
+
+const nuevo={
+
+matchId:p.matchId,
+
+partido:p.partido,
+
+local:p.local,
+
+visitante:p.visitante,
+
+dia:p.dia,
+
+grupo:p.grupo,
+
+marcadorLocal:Number(localInput),
+
+marcadorVisitante:Number(visitanteInput)
+
+};
+
+const idx=resultadosFinales.findIndex(r=>
+(r.matchId&&r.matchId===p.matchId)
+|| r.partido===p.partido
+);
+
+if(idx>=0){
+
+resultadosFinales[idx]=nuevo;
+
+}else{
+
+resultadosFinales.push(nuevo);
+
+}
+
+}
+
+});
+
+await setDoc(doc(db,"resultados","fase_grupos"),{
+
+resultados:resultadosFinales,
+
+actualizado:new Date()
+
+});
+
+resultadosGuardados=resultadosFinales;
+
+alert("✅ Resultados guardados.");
+
+await cargarDatos();
+
+};
+
+window.resetearResultados = async function(){
+
+const confirmar = confirm(
+"¿Seguro que quieres borrar TODOS los resultados reales?"
+);
+
+if(!confirmar){
+return;
+}
+
+await setDoc(doc(db,"resultados","fase_grupos"),{
+resultados:[],
+actualizado:new Date()
+});
+
+resultadosGuardados=[];
+
+document.querySelectorAll('input[type="number"]').forEach(input=>{
+input.value="";
+});
+
+alert("✅ Resultados reales eliminados.");
+
+await cargarDatos();
+
+};
+
+function ganador(a,b){
+
+if(a>b)return"local";
+
+if(b>a)return"visitante";
+
+return"empate";
+
+}
+
+function puntos(pred,real){
+
+if(!real)return 0;
+
+const pL=Number(pred.marcadorLocal);
+
+const pV=Number(pred.marcadorVisitante);
+
+const rL=Number(real.marcadorLocal);
+
+const rV=Number(real.marcadorVisitante);
+
+if(pL===rL&&pV===rV)return 3;
+
+if(ganador(pL,pV)===ganador(rL,rV))return 1;
+
+return 0;
+
+}
+
+window.calcularPuntos=async function(){
+
+await cargarResultados();
+
+for(const q of quinielas){
+
+let total=0;
+
+if(q.predicciones){
+
+q.predicciones.forEach(pred=>{
+
+const real=resultadosGuardados.find(r=>
+(r.matchId&&r.matchId===pred.matchId)
+|| r.partido===pred.partido
+);
+
+total+=puntos(pred,real);
+
+});
+
+}
+
+await updateDoc(doc(db,"quinielas",q.id),{
+
+puntos:total,
+
+puntosActualizados:new Date()
+
+});
+
+}
+
+alert("✅ Puntos actualizados.");
+
+await cargarDatos();
+
+};
+
+cargarDatos();
+
+</script>
+
+</body>
+</html>
